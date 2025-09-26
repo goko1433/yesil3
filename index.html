@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Finans Paneli</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="app-container">
+
+        <div id="auth-view" class="view active-view">
+            <div class="auth-box">
+                <h1 class="auth-title">Pro Finans Paneli</h1>
+                <div id="login-form">
+                    <input type="text" id="login-username" placeholder="Kullanıcı Adı" required>
+                    <input type="password" id="login-password" placeholder="Parola" required>
+                    <button id="login-btn">Giriş Yap</button>
+                    <p class="form-switcher">Hesabınız yok mu? <a href="#" id="show-register">Kayıt Olun</a></p>
+                </div>
+                <div id="register-form" style="display:none;">
+                    <input type="text" id="register-username" placeholder="Kullanıcı Adı" required>
+                    <input type="password" id="register-password" placeholder="Parola" required>
+                    <button id="register-btn">Kayıt Ol</button>
+                    <p class="form-switcher">Hesabınız var mı? <a href="#" id="show-login">Giriş Yapın</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="app-view" class="view">
+            <header class="app-header">
+                <h1 class="app-title">Kontrol Paneli</h1>
+                <div class="header-actions">
+                    <button id="dashboard-btn" class="icon-btn" title="Dashboard">
+                        <i class="fas fa-chart-line"></i>
+                    </button>
+                    <button id="accounts-btn" class="icon-btn" title="Hesaplarım">
+                        <i class="fas fa-wallet"></i>
+                    </button>
+                    <button id="reports-btn" class="icon-btn" title="Raporlar">
+                        <i class="fas fa-file-invoice"></i>
+                    </button>
+                    <button id="settings-btn" class="icon-btn" title="Ayarlar">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button id="logout-btn" class="icon-btn" title="Çıkış Yap">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </header>
+
+            <nav class="app-nav">
+                <button class="nav-btn active" data-view="overview">
+                    <i class="fas fa-home"></i>
+                    <span>Genel Bakış</span>
+                </button>
+                <button class="nav-btn" data-view="accounts">
+                    <i class="fas fa-wallet"></i>
+                    <span>Hesaplar</span>
+                </button>
+                <button class="nav-btn" data-view="budget">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Bütçe</span>
+                </button>
+                <button class="nav-btn" data-view="investments">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Yatırımlar</span>
+                </button>
+                <button class="nav-btn" data-view="reports">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Raporlar</span>
+                </button>
+            </nav>
+
+            <main class="dashboard">
+                <!-- GENEL BAKIŞ VIEW -->
+                <div id="overview-view" class="content-view active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-landmark"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Net Değer</div>
+                                <div class="stat-value" id="net-worth">0,00 ₺</div>
+                                <div class="stat-change" id="net-worth-change">+0%</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-piggy-bank"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Toplam Birikim</div>
+                                <div class="stat-value" id="total-savings">0,00 ₺</div>
+                                <div class="stat-change" id="savings-change">+0%</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Toplam Borç</div>
+                                <div class="stat-value" id="total-debt">0,00 ₺</div>
+                                <div class="stat-change" id="debt-change">-0%</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Aylık Getiri</div>
+                                <div class="stat-value" id="monthly-return">0,00 ₺</div>
+                                <div class="stat-change" id="return-change">+0%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <h3>Varlık Dağılımı</h3>
+                            <div class="chart-container">
+                                <canvas id="asset-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Gelir-Gider Analizi</h3>
+                            <div class="chart-container">
+                                <canvas id="income-expense-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+                        <h3>Hızlı İşlemler</h3>
+                        <div class="action-buttons">
+                            <button class="action-btn" data-action="add-income">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Gelir Ekle</span>
+                            </button>
+                            <button class="action-btn" data-action="add-expense">
+                                <i class="fas fa-minus-circle"></i>
+                                <span>Gider Ekle</span>
+                            </button>
+                            <button class="action-btn" data-action="transfer">
+                                <i class="fas fa-exchange-alt"></i>
+                                <span>Transfer</span>
+                            </button>
+                            <button class="action-btn" data-action="investment">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Yatırım</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HESAPLAR VIEW -->
+                <div id="accounts-view" class="content-view">
+                    <div class="accounts-header">
+                        <h2>Hesaplarım</h2>
+                        <button class="btn-primary" id="add-account-btn">
+                            <i class="fas fa-plus"></i>
+                            Yeni Hesap
+                        </button>
+                    </div>
+                    <div class="accounts-grid" id="accounts-container">
+                        <!-- Dinamik olarak eklenecek -->
+                    </div>
+                </div>
+
+                <!-- BÜTÇE VIEW -->
+                <div id="budget-view" class="content-view">
+                    <div class="budget-header">
+                        <h2>Bütçe Planlama</h2>
+                        <div class="budget-summary">
+                            <div class="budget-stat">
+                                <span>Aylık Bütçe</span>
+                                <strong id="monthly-budget">0,00 ₺</strong>
+                            </div>
+                            <div class="budget-stat">
+                                <span>Kalan</span>
+                                <strong id="budget-remaining">0,00 ₺</strong>
+                            </div>
+                            <div class="budget-stat">
+                                <span>Kullanım</span>
+                                <strong id="budget-usage">0%</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="budget-categories" id="budget-categories">
+                        <!-- Dinamik olarak eklenecek -->
+                    </div>
+                </div>
+
+                <!-- YATIRIMLAR VIEW -->
+                <div id="investments-view" class="content-view">
+                    <div class="investments-header">
+                        <h2>Yatırım Portföyü</h2>
+                        <button class="btn-primary" id="add-investment-btn">
+                            <i class="fas fa-plus"></i>
+                            Yatırım Ekle
+                        </button>
+                    </div>
+                    <div class="portfolio-stats">
+                        <div class="portfolio-stat">
+                            <span>Portföy Değeri</span>
+                            <strong id="portfolio-value">0,00 ₺</strong>
+                        </div>
+                        <div class="portfolio-stat">
+                            <span>Toplam Getiri</span>
+                            <strong id="total-return">0,00 ₺</strong>
+                        </div>
+                        <div class="portfolio-stat">
+                            <span>Getiri Oranı</span>
+                            <strong id="return-rate">0%</strong>
+                        </div>
+                    </div>
+                    <div class="investments-grid" id="investments-container">
+                        <!-- Dinamik olarak eklenecek -->
+                    </div>
+                </div>
+
+                <!-- RAPORLAR VIEW -->
+                <div id="reports-view" class="content-view">
+                    <div class="reports-header">
+                        <h2>Finansal Raporlar</h2>
+                        <div class="report-filters">
+                            <select id="report-period">
+                                <option value="month">Son 1 Ay</option>
+                                <option value="quarter">Son 3 Ay</option>
+                                <option value="year">Son 1 Yıl</option>
+                            </select>
+                            <button class="btn-primary" id="export-report-btn">
+                                <i class="fas fa-download"></i>
+                                PDF İndir
+                            </button>
+                        </div>
+                    </div>
+                    <div class="reports-grid">
+                        <div class="report-card">
+                            <h3>Gelir-Gider Raporu</h3>
+                            <div class="report-content" id="income-expense-report">
+                                <!-- Dinamik içerik -->
+                            </div>
+                        </div>
+                        <div class="report-card">
+                            <h3>Varlık Analizi</h3>
+                            <div class="report-content" id="asset-analysis-report">
+                                <!-- Dinamik içerik -->
+                            </div>
+                        </div>
+                        <div class="report-card">
+                            <h3>Yatırım Performansı</h3>
+                            <div class="report-content" id="investment-report">
+                                <!-- Dinamik içerik -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODALLAR -->
+    <div id="modal-overlay" class="modal-overlay" style="display:none;">
+        <!-- Mevcut modallar... -->
+        
+        <!-- Yeni Profesyonel Modallar -->
+        <div id="account-modal" class="modal-box">
+            <h2 id="account-modal-title">Yeni Hesap</h2>
+            <label>Hesap Adı</label>
+            <input type="text" id="account-name" placeholder="Örn: Ana Hesap, Tasarruf">
+            <label>Hesap Türü</label>
+            <select id="account-type">
+                <option value="checking">Vadesiz Hesap</option>
+                <option value="savings">Tasarruf Hesabı</option>
+                <option value="investment">Yatırım Hesabı</option>
+                <option value="credit">Kredi Kartı</option>
+                <option value="cash">Nakit</option>
+            </select>
+            <label>Başlangıç Bakiyesi (₺)</label>
+            <input type="number" id="account-balance" placeholder="0.00">
+            <label>Hesap Rengi</label>
+            <input type="color" id="account-color" value="#007bff">
+            <div class="modal-actions">
+                <button class="btn-secondary" id="cancel-account-btn">İptal</button>
+                <button class="btn-primary" id="save-account-btn">Kaydet</button>
+            </div>
+        </div>
+
+        <div id="transaction-modal" class="modal-box">
+            <h2 id="transaction-modal-title">Yeni İşlem</h2>
+            <label>İşlem Türü</label>
+            <select id="transaction-type">
+                <option value="income">Gelir</option>
+                <option value="expense">Gider</option>
+                <option value="transfer">Transfer</option>
+            </select>
+            <label>Hesap</label>
+            <select id="transaction-account"></select>
+            <label>Kategori</label>
+            <select id="transaction-category"></select>
+            <label>Tutar (₺)</label>
+            <input type="number" id="transaction-amount" placeholder="0.00">
+            <label>Tarih</label>
+            <input type="datetime-local" id="transaction-date">
+            <label>Açıklama</label>
+            <textarea id="transaction-description" placeholder="İşlem açıklaması..."></textarea>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="cancel-transaction-btn">İptal</button>
+                <button class="btn-primary" id="save-transaction-btn">Kaydet</button>
+            </div>
+        </div>
+
+        <div id="investment-modal" class="modal-box">
+            <h2>Yeni Yatırım</h2>
+            <label>Yatırım Türü</label>
+            <select id="investment-type">
+                <option value="stock">Hisse Senedi</option>
+                <option value="fund">Yatırım Fonu</option>
+                <option value="crypto">Kripto Para</option>
+                <option value="gold">Altın</option>
+                <option value="realestate">Emlak</option>
+            </select>
+            <label>Yatırım Adı</label>
+            <input type="text" id="investment-name" placeholder="Örn: X Hisse, Y Fonu">
+            <label>Miktar</label>
+            <input type="number" id="investment-quantity" placeholder="0">
+            <label>Birim Fiyat (₺)</label>
+            <input type="number" id="investment-price" placeholder="0.00">
+            <label>Alış Tarihi</label>
+            <input type="date" id="investment-date">
+            <div class="modal-actions">
+                <button class="btn-secondary" id="cancel-investment-btn">İptal</button>
+                <button class="btn-primary" id="save-investment-btn">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
