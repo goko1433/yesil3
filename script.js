@@ -229,7 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const getUserData = (key) => {
-        return JSON.parse(localStorage.getItem(getStorageKey(key)) || '[]');
+        const data = localStorage.getItem(getStorageKey(key));
+        return data ? JSON.parse(data) : (key === 'accounts' ? [] : null);
     };
 
     const saveUserData = (key, data) => {
@@ -570,7 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     data: accounts.map(acc => acc.balance),
                     backgroundColor: accounts.map(acc => acc.color),
                     borderWidth: 2,
-                    borderColor: var(--bg-main)
+                    borderColor: '#121212'
                 }]
             },
             options: {
@@ -580,7 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     legend: {
                         position: 'bottom',
                         labels: {
-                            color: var(--text-primary),
+                            color: '#e0e0e0',
                             padding: 20
                         }
                     }
@@ -600,15 +601,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     {
                         label: 'Gelir',
                         data: [5000, 6000, 5500, 7000, 6500, 8000],
-                        backgroundColor: var(--accent-green),
-                        borderColor: var(--accent-green),
+                        backgroundColor: '#28a745',
+                        borderColor: '#28a745',
                         borderWidth: 1
                     },
                     {
                         label: 'Gider',
                         data: [4500, 5200, 4800, 6000, 5800, 7200],
-                        backgroundColor: var(--accent-red),
-                        borderColor: var(--accent-red),
+                        backgroundColor: '#dc3545',
+                        borderColor: '#dc3545',
                         borderWidth: 1
                     }
                 ]
@@ -620,25 +621,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            color: var(--text-secondary)
+                            color: '#a0a0a0'
                         },
                         grid: {
-                            color: var(--border-color)
+                            color: '#3a3a3a'
                         }
                     },
                     x: {
                         ticks: {
-                            color: var(--text-secondary)
+                            color: '#a0a0a0'
                         },
                         grid: {
-                            color: var(--border-color)
+                            color: '#3a3a3a'
                         }
                     }
                 },
                 plugins: {
                     legend: {
                         labels: {
-                            color: var(--text-primary)
+                            color: '#e0e0e0'
                         }
                     }
                 }
@@ -698,24 +699,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---- OLAY DİNLEYİCİLERİ ----
     // Auth listeners
-    showRegisterLink.addEventListener('click', (e) => { e.preventDefault(); loginForm.style.display = 'none'; registerForm.style.display = 'block'; });
-    showLoginLink.addEventListener('click', (e) => { e.preventDefault(); registerForm.style.display = 'none'; loginForm.style.display = 'block'; });
+    showRegisterLink.addEventListener('click', (e) => { 
+        e.preventDefault(); 
+        loginForm.style.display = 'none'; 
+        registerForm.style.display = 'block'; 
+    });
+
+    showLoginLink.addEventListener('click', (e) => { 
+        e.preventDefault(); 
+        registerForm.style.display = 'none'; 
+        loginForm.style.display = 'block'; 
+    });
 
     registerBtn.addEventListener('click', () => {
         const username = registerUsernameInput.value.trim();
         const password = registerPasswordInput.value.trim();
         if (!username || !password) return alert('Kullanıcı adı ve parola boş olamaz.');
+        
         const users = JSON.parse(localStorage.getItem('app_users')) || {};
         if (users[username]) return alert('Bu kullanıcı adı zaten alınmış.');
+        
         users[username] = { password };
         localStorage.setItem('app_users', JSON.stringify(users));
-        alert('Kayıt başarılı!');
+        alert('Kayıt başarılı! Lütfen giriş yapın.');
+        
+        // Formları resetle ve login'e geç
+        registerUsernameInput.value = '';
+        registerPasswordInput.value = '';
         showLoginLink.click();
     });
 
     loginBtn.addEventListener('click', () => {
         const username = loginUsernameInput.value.trim();
         const password = loginPasswordInput.value.trim();
+        
+        if (!username || !password) return alert('Lütfen kullanıcı adı ve parola girin.');
+        
         const users = JSON.parse(localStorage.getItem('app_users')) || {};
         if (users[username] && users[username].password === password) {
             currentUser = username;
@@ -738,7 +757,11 @@ document.addEventListener('DOMContentLoaded', () => {
     accountsBtn.addEventListener('click', () => showContentView('accounts'));
     reportsBtn.addEventListener('click', () => showContentView('reports'));
     settingsBtn.addEventListener('click', () => showModal('settings'));
-    logoutBtn.addEventListener('click', logout);
+
+    // DÜZELTME: logoutBtn event listener'ı
+    logoutBtn.addEventListener('click', () => {
+        logout();
+    });
 
     // Account modal listeners
     addAccountBtn.addEventListener('click', () => {
@@ -798,27 +821,46 @@ document.addEventListener('DOMContentLoaded', () => {
         showContentView('overview');
     };
 
+    // DÜZELTME: logout fonksiyonu düzgün tanımlandı
     const logout = () => {
-        clearInterval(updateInterval);
+        if (updateInterval) {
+            clearInterval(updateInterval);
+            updateInterval = null;
+        }
+        
         currentUser = null;
         localStorage.removeItem('app_last_user');
+        
+        // Formları temizle
         loginUsernameInput.value = '';
         loginPasswordInput.value = '';
+        registerUsernameInput.value = '';
+        registerPasswordInput.value = '';
+        
+        // Auth view'e dön
         showView('auth');
+        loginForm.style.display = 'block';
+        registerForm.style.display = 'none';
     };
 
     const autoLoginAndStart = () => {
         currentUser = localStorage.getItem('app_last_user');
         if (currentUser) {
-            initAppForUser();
-        } else {
-            showView('auth');
+            // Kullanıcı verilerini kontrol et
+            const users = JSON.parse(localStorage.getItem('app_users')) || {};
+            if (users[currentUser]) {
+                initAppForUser();
+                return;
+            }
         }
+        // Geçerli kullanıcı yoksa auth view göster
+        showView('auth');
     };
 
     // Global functions for HTML onclick events
     window.editAccount = editAccount;
     window.addTransactionToAccount = addTransactionToAccount;
 
+    // Uygulamayı başlat
     autoLoginAndStart();
 });
